@@ -19,9 +19,20 @@ class myModal extends React.Component {
         slidesToShow: 1,
         slidesToScroll: 1
     }; 
-    
+    checkLoginState = ()=>{
+        let state = true;
+        const {loginUid} = this.props;
+        if(loginUid === null){
+            state = false; 
+            alert("請先登入會員");
+        }
+        return state;
+    }
     //新增留言未做: 新增後滑動到流言處、enter換行
     postComment = async()=>{
+        
+        if(!(this.checkLoginState())) return;
+
         let dataToServer = {
             commentText:this.state.commentText,
             postid:this.props.info[0].postid,
@@ -32,25 +43,34 @@ class myModal extends React.Component {
         this.props.handleModal(this.props.info[0].postid);
     }
     //點愛心改變已點讚或未點讚,點擊後的狀態傳給handleLikeState
-    clickLike = async(postid)=>{      
-        if(this.props.likeState){
-            await axios.delete(`http://localhost:8000/viewPage/cancelLike?uid=${this.props.loginUid}&postid=${this.props.info[0].postid}`);
-            this.props.handleLikeState(postid,0);
+    clickLike = async(postid)=>{ 
+        let state = 0; 
+        const {loginUid,info,likeState,handleLikeState} = this.props;   
+
+        if(!(this.checkLoginState())) return;
+
+        if(likeState){
+            await axios.delete(`http://localhost:8000/viewPage/cancelLike?uid=${loginUid}&postid=${info[0].postid}`);
+            handleLikeState(postid,state);
         }else{
-            await axios.post(`http://localhost:8000/viewPage/addLike?uid=${this.props.loginUid}&postid=${this.props.info[0].postid}`);  
-            this.props.handleLikeState(postid,1);
+            state = 1;
+            await axios.post(`http://localhost:8000/viewPage/addLike?uid=${loginUid}&postid=${info[0].postid}`);  
+            handleLikeState(postid,state);
         }
     }
     clickSaving = async()=>{
         let state = 0;
-        console.log("click savingBtb props.likeState: ",this.props.savingState);
-        if(this.props.savingState){
-            await axios.delete(`http://localhost:8000/viewPage/deleteSavingState?uid=${this.props.loginUid}&postid=${this.props.info[0].postid}`)
-            this.props.handleSavingState(state);
+        const {savingState,loginUid,info,handleSavingState} = this.props; 
+        // console.log("click savingBtb props.likeState: ",savingState);
+        if(!(this.checkLoginState())) return;
+        
+        if(savingState){
+            await axios.delete(`http://localhost:8000/viewPage/deleteSavingState?uid=${loginUid}&postid=${info[0].postid}`)
+            handleSavingState(state);
         }else{
             state = 1;
-            await axios.post(`http://localhost:8000/viewPage/addSavingState?uid=${this.props.loginUid}&postid=${this.props.info[0].postid}`)
-             this.props.handleSavingState(state)
+            await axios.post(`http://localhost:8000/viewPage/addSavingState?uid=${loginUid}&postid=${info[0].postid}`)
+            handleSavingState(state)
         }
     }
     //轉換日期格式:UTC轉當地時間

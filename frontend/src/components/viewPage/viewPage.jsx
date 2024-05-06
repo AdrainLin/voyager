@@ -71,12 +71,13 @@ class Content extends React.Component{
     }
     
     render(){
+       
         return(
             <div className="content row col-12 col-lg-10">
                 <div className=" col-12 d-flex align-items-center justify-content-between">
-                    
+                    {/*搜尋框*/}
                     <div className="searchBox mb-1 ps-3 border border-3 rounded-pill d-flex align-items-center">
-                        <input className="inline-block h-100 border-0" type="text" placeholder="請輸入關鍵字:" 
+                        <input className="h-100 border-0" type="text" placeholder="請輸入關鍵字:" 
                                onChange={(e)=>{
                                     this.setState({inputText:e.target.value},
                                     ()=>{this.sarchClick(this.state.inputText)});                  
@@ -88,7 +89,7 @@ class Content extends React.Component{
                             </svg>
                         </button>
                     </div>    
-
+                    {/*排序按鈕*/}
                     <div className="sortBox d-flex justify-content-between px-0">
                         <button className="badge border-0 text-dark" 
                                 onClick={()=>{this.changeSort('new');}}
@@ -132,7 +133,7 @@ class Content extends React.Component{
 //網站內容容器
 class Container extends React.Component{
     state = {
-        dataAry:[{img:""}],
+        dataAry:[],
         modalInfoAry:[],
         postTagAry:[],
         postCommentAry:[],
@@ -152,7 +153,7 @@ class Container extends React.Component{
     render() {
 
         return(  
-            <div className="container max-width: 100% mt-3 d-flex gx-5 align-items-start mb-3">
+            <div className="container mt-3 d-flex gx-5 align-items-start mb-3">
                 <MyModal  
                         info={this.state.modalInfoAry} 
                         tag={this.state.postTagAry} 
